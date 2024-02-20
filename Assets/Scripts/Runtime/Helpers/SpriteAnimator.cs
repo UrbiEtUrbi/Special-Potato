@@ -39,6 +39,14 @@ public class SpriteAnimator : MonoBehaviour
         _countDownTimer = _timeToNextFrame;
         loopOn = loop;
         IsAnimating = true;
+        if (_image is not null)
+        {
+            _image.sprite = _sprites[_index];
+        }
+        else if (_spriteRenderer is not null)
+        {
+            _spriteRenderer.sprite = _sprites[_index];
+        }
     }
 
     private int _index = 0;

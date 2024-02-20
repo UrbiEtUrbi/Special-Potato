@@ -48,6 +48,8 @@ public class ControllerRooms : MonoBehaviour
         ControllerGame.Instance.IsGamePlaying = false;
         transitionIn.gameObject.SetActive(true);
         transitionIn.Reset(false);
+        SoundManager.Instance.Play("room_transition_in");
+
 
         yield return new WaitUntil(() => !transitionIn.IsAnimating);
         Destroy(m_CurrentRoom.gameObject);
@@ -68,9 +70,9 @@ public class ControllerRooms : MonoBehaviour
 
     IEnumerator LoadNext()
     {
-        Debug.Log(transitionOut);
         transitionOut.gameObject.SetActive(true);
         transitionOut.Reset(false);
+        SoundManager.Instance.Play("room_transition_out");
         yield return new WaitUntil(() => !transitionOut.IsAnimating);
         transitionOut.gameObject.SetActive(false);
 
