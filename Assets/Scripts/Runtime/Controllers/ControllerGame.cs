@@ -27,6 +27,8 @@ public class ControllerGame : ControllerLocal
 
 
     public CinemachineVirtualCamera GetCCamera => VCamera;
+    private CinemachineConfiner2D Confiner;
+
 
     [HideInInspector]
     public static Player Player => Instance.player;
@@ -95,16 +97,27 @@ public class ControllerGame : ControllerLocal
 
         // MusicPlayer.Instance.PlayPlaylist("overworld");
 
-
+        
 
         base.Init();
         StartCoroutine(WaitForSceneLoad());
     }
 
+    public void AssignConfiner(PolygonCollider2D polygonCollider2D)
+    {
+        if (Confiner == null)
+        {
+            Confiner = VCamera.GetComponent<CinemachineConfiner2D>();
+        }
+
+        Confiner.m_BoundingShape2D = polygonCollider2D;
+        Confiner.InvalidateCache();
+    }
+
     IEnumerator WaitForSceneLoad() {
         yield return null;
         player = Instantiate(PlayerPrefab);
-
+      
         Rooms.InitialRoom(0,0);
        
        
