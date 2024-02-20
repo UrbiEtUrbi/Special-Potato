@@ -8,12 +8,12 @@ public class ControllerRespawn : MonoBehaviour
 
 
 
-    public RespawnPosition CurrentRespawn;
+    public EntrancePosition CurrentRespawn;
 
     public UnityEvent OnPlayerRepawned = new();
 
 
-    public void Register(RespawnPosition respawnPosition)
+    public void Register(EntrancePosition respawnPosition)
     {
 
         if(CurrentRespawn == null || CurrentRespawn.transform.position.x < respawnPosition.transform.position.x){

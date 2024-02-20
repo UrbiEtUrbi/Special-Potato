@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RespawnPosition : MonoBehaviour
+public class EntrancePosition : MonoBehaviour
 {
 
+    public int Id;
     public void Register()
     {
         ControllerGame.ControllerRespawn.Register(this);

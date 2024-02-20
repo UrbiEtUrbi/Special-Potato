@@ -5,12 +5,17 @@ using UnityEngine.UI;
 
 public class SpriteAnimator : MonoBehaviour
 {
+    [ReorderableList]
     [SerializeField] private Sprite[] _sprites;
     [SerializeField] private float _timeToNextFrame;
     [SerializeField] private bool loopOn = true;
     private float _countDownTimer;
     private Image _image;
     private SpriteRenderer _spriteRenderer;
+
+
+    public bool IsAnimating;
+
 
     void Awake()
     {
@@ -28,11 +33,12 @@ public class SpriteAnimator : MonoBehaviour
         _countDownTimer = _timeToNextFrame;
     }
 
-    public void Reset()
+    public void Reset(bool loop)
     {
         _index = 0;
         _countDownTimer = _timeToNextFrame;
-
+        loopOn = loop;
+        IsAnimating = true;
     }
 
     private int _index = 0;
@@ -48,6 +54,7 @@ public class SpriteAnimator : MonoBehaviour
         }
         else
         {
+            IsAnimating = false;
             if (loopOn)
             {
                 _index = 0;

@@ -33,7 +33,11 @@ public class ControllerGame : ControllerLocal
 
     Player player;
 
+    [Hide]
     public bool IsGameOver;
+
+    [Hide]
+    public bool IsGamePlaying;
 
 
 
@@ -48,13 +52,12 @@ public class ControllerGame : ControllerLocal
     ControllerRespawn m_ControllerRespawn;
     public static ControllerRespawn ControllerRespawn => Instance.m_ControllerRespawn;
 
-    ScreenFader m_Fader;
-    public static ScreenFader Fader => Instance.m_Fader;
 
     ControllerAttack m_ControllerAttack;
     public static ControllerAttack ControllerAttack => Instance.m_ControllerAttack;
 
-
+    ControllerRooms m_ControllerRooms;
+    public static ControllerRooms Rooms => Instance.m_ControllerRooms;
 
     #endregion
 
@@ -83,8 +86,9 @@ public class ControllerGame : ControllerLocal
         m_ControllerEntities = GatherComponent<ControllerEntities>();
         m_SceneLoader = GetComponent<SceneLoader>();
         m_ControllerRespawn = GatherComponent<ControllerRespawn>();
-        m_Fader = GatherComponent<ScreenFader>();
+
         m_ControllerAttack = GetComponent<ControllerAttack>();
+        m_ControllerRooms = GetComponent<ControllerRooms>();
         Instance = this;
 
 
@@ -101,8 +105,7 @@ public class ControllerGame : ControllerLocal
         yield return null;
         player = Instantiate(PlayerPrefab);
 
-        player.transform.position = StartPosition;
-        VCamera.Follow = player.transform;
+        Rooms.InitialRoom(0,0);
        
        
     }
@@ -113,8 +116,6 @@ public class ControllerGame : ControllerLocal
 
         //reload whole game scenes or entities
         SoundManager.Instance.PlayDelayed("transform", 3f); 
-        m_Fader.StartFade(10f, true, 10f);
-
         Invoke(nameof(Reload), 9.5f);
     }
 
@@ -130,9 +131,6 @@ public class ControllerGame : ControllerLocal
     public void PlayerDie()
     {
         //reload scenes or entities
-        m_Fader.StartFade(0.5f,true,0.5f);
-
-        m_ControllerRespawn.Respawn(0.5f+ m_Fader.TimeToFade);
     }
 
     public T GatherComponent<T>() where T : MonoBehaviour {
