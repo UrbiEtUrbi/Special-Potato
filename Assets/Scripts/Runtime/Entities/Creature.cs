@@ -12,8 +12,13 @@ public class Creature : Entity, IHealth
 
 
     int currentHealth;
+     
 
+    protected bool isStunned = false;
+    protected bool isFrozen = false;
 
+    [SerializeField]
+    protected Animator _Animator;
 
 
     protected virtual void Start()
@@ -22,7 +27,7 @@ public class Creature : Entity, IHealth
     }
 
 
-    public void ChangeHealth(int amount)
+    public  virtual void ChangeHealth(int amount)
     {
         currentHealth += amount;
         currentHealth = Mathf.Min(currentHealth, MaxHealth);
@@ -36,14 +41,21 @@ public class Creature : Entity, IHealth
         }
     }
 
-    public void Die()
+    public virtual void Die()
     {
         ControllerGame.ControllerAttack.OnEnemyDied();
         //spawn death animation
         Destroy(gameObject);
     }
 
+
+
     public void SetInitialHealth(int amount) {
         currentHealth = amount;
+    }
+
+    public virtual void ChangeHealth(int amount, AttackType type)
+    {
+        ChangeHealth(amount);
     }
 }

@@ -20,13 +20,15 @@ public class AttackObject : MonoBehaviour
     bool generateImpulse;
     [SerializeField]
     float impulseAmplitude;
+
+    AttackType type;
     private void Awake()
     {
         dd = GetComponent<DestroyDelayed>();
      
     }
 
-    public void Init(Vector2 size, Vector3 position, int _damage, float lifetime)
+    public void Init(Vector2 size, Vector3 position, int _damage, float lifetime, AttackType type)
     {
         if (lifetime > 0)
         {
@@ -36,6 +38,7 @@ public class AttackObject : MonoBehaviour
         damage = _damage;
         transform.position = position;
         initialized = true;
+        this.type = type;
     }
 
 
@@ -49,12 +52,18 @@ public class AttackObject : MonoBehaviour
         {
 
             
-            colliderHit.GetComponent<IHealth>().ChangeHealth(-damage);
+            colliderHit.GetComponent<IHealth>().ChangeHealth(-damage, type);
             CancelInvoke();
             if (generateImpulse)
             {
                 var cis = GetComponent<CinemachineImpulseSource>();
                 cis.GenerateImpulse(new Vector3(Random.Range(-1f,1f), Random.Range(-1, 1f), 0) * impulseAmplitude);
+            }
+
+            var lp = GetComponent<LinearProjectile>();
+            if (lp != null)
+            {
+                lp.BeforeDestroy();
             }
             Destroy(gameObject);
         }

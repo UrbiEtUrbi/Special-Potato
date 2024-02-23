@@ -49,6 +49,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccff5c3b1b4e04fbebde1f159b112c3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SwordAttackPosition: {x: 9.08, y: 0.81, z: 0}
+  SwordAttackSize: {x: 11, y: 13.68, z: 0}
 --- !u!114 &2544509671642550388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,11 +66,13 @@ MonoBehaviour:
   rb: {fileID: 1600041780360229193}
   MaxSpeed: 30
   HorizontalAcc: 10
-  Drag: 0.9
-  JumpVelocity: 50
+  Drag: 0.7
+  JumpVelocity: 40.9
+  onGround: 1
   groundCheckSize: {x: 3, y: 1}
-  groundCheckPosition: {x: 0, y: -5.6}
+  groundCheckPosition: {x: 0, y: -7}
   Animator: {fileID: 4899618603145869949}
+  AttackCooldown: 0.5
 --- !u!61 &3319139048083423527
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -232,8 +236,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1254020425
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 27001060, guid: ef3649d936c5744ebbd0e6b42153ec9a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

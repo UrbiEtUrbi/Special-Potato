@@ -15,6 +15,11 @@ public class DestroyDelayed : MonoBehaviour
 
     public void DestroyEvent()
     {
+        var lp = GetComponentInChildren<LinearProjectile>();
+        if (lp != null)
+        {
+            lp.BeforeDestroy();
+        }
         Destroy(gameObject);
     }
 

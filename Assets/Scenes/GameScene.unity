@@ -161,7 +161,7 @@ MonoBehaviour:
   m_RefResolutionX: 84
   m_RefResolutionY: 48
   m_CropFrame: 3
-  m_GridSnapping: 1
+  m_GridSnapping: 2
   m_FilterMode: 0
   m_UpscaleRT: 0
   m_PixelSnapping: 0
@@ -280,7 +280,7 @@ Transform:
   m_GameObject: {fileID: 137808244}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0000009536743, y: -4.7999997, z: 0}
+  m_LocalPosition: {x: -34, y: -11.999999, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -349,7 +349,7 @@ Transform:
   m_GameObject: {fileID: 249457874}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0000009536743, y: -4.7999997, z: 0}
+  m_LocalPosition: {x: -34, y: -11.999999, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -443,7 +443,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BoundingShape2D: {fileID: 0}
-  m_Damping: 0.5
+  m_Damping: 0
   m_MaxWindowSize: -1
 --- !u!1 &359797238
 GameObject:
@@ -766,13 +766,13 @@ MonoBehaviour:
   m_ZDamping: 1
   m_TargetMovementOnly: 1
   m_ScreenX: 0.5
-  m_ScreenY: 0.4
+  m_ScreenY: 0.5
   m_CameraDistance: 10
   m_DeadZoneWidth: 0.2
-  m_DeadZoneHeight: 0.243
+  m_DeadZoneHeight: 0.2
   m_DeadZoneDepth: 0
   m_UnlimitedSoftZone: 1
-  m_SoftZoneWidth: 0.2
+  m_SoftZoneWidth: 0.652
   m_SoftZoneHeight: 2
   m_BiasX: 0
   m_BiasY: 0
@@ -826,7 +826,7 @@ Transform:
   m_GameObject: {fileID: 1250985341}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -34, y: -12, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -917,7 +917,7 @@ Canvas:
   m_GameObject: {fileID: 2085012340}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 137808248}
   m_PlaneDistance: 1
   m_PixelPerfect: 1
@@ -1008,6 +1008,7 @@ GameObject:
   - component: {fileID: 2089064009}
   - component: {fileID: 2089064010}
   - component: {fileID: 2089064011}
+  - component: {fileID: 2089064012}
   m_Layer: 0
   m_Name: ControllerGame
   m_TagString: Untagged
@@ -1065,6 +1066,28 @@ MonoBehaviour:
   - {fileID: 3174201858841971310, guid: fd0b825925c034c0391550f92866b764, type: 3}
   - {fileID: 3174201858841971310, guid: 93f469f4ea170443eb8dc1769e2bd771, type: 3}
   - {fileID: 7466946498242143929, guid: ae992ae12a8fd439dbf07a4ffe58b646, type: 3}
+--- !u!114 &2089064012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2089064008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a9af9735616248339b5a40af48eb9d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Attacks:
+  - AttackType: 0
+    AttackObject: {fileID: 2410243637883200265, guid: 8bc60e2babddb4d3e8c33999e6959a4f, type: 3}
+    AttackVFX: {fileID: 0}
+  - AttackType: 3
+    AttackObject: {fileID: 2410243637883200265, guid: 75cff3071afd54970b84bb7b9e1539e9, type: 3}
+    AttackVFX: {fileID: 0}
+  - AttackType: 4
+    AttackObject: {fileID: 2410243637883200265, guid: 0ed34582851744d9eac8c4add46a7779, type: 3}
+    AttackVFX: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

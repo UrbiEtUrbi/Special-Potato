@@ -14,11 +14,17 @@ public class ControllerAttack : MonoBehaviour
     
 
 
-    public AttackObject Attack(Transform source, bool parentToSource, AttackType Type, Vector3 position, Vector3 size, int damage,float lifetime = -1) {
+    public AttackObject Attack(Transform source, bool parentToSource, AttackType Type, Vector3 position, Vector3 size, int damage, int direction, float lifetime = -1) {
         var data = Attacks.Find(x => x.AttackType == Type);
         var attack = Instantiate(data.AttackObject, position, default, parentToSource ? source : null);
-        attack.Init(size, position, damage, lifetime);
-        
+        attack.Init(size, position, damage, lifetime, Type);
+
+        var projectile = attack.GetComponent<LinearProjectile>();
+        if (projectile != null)
+        {
+            projectile.SetDirection(direction);
+        }
+
         if (data.AttackVFX)
         {
             var attackVfx = Instantiate(data.AttackVFX, position, default, parentToSource ? source : null);
@@ -49,5 +55,7 @@ public enum AttackType
 {
     PlayerSword,
     GoombaAttack,
-    ArcherAttack
+    ArcherAttack,
+    IceSpike,
+    IceMelee
 }

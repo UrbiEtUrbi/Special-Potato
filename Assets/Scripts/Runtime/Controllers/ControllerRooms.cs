@@ -66,6 +66,8 @@ public class ControllerRooms : MonoBehaviour
         m_CurrentRoom = Instantiate(NextRoom);
         m_CurrentEntrance = m_CurrentRoom.GetEntrance(nextEntrance);
         ControllerGame.Instance.AssignConfiner(m_CurrentRoom.GetComponentInChildren<PolygonCollider2D>());
+
+      //  m_CurrentRoom.GetComponentInChildren<ParalaxBkg>().Init(ControllerGame.Instance.GetCCamera.transform);
         ControllerGame.Player.transform.position = m_CurrentEntrance.transform.position;
     }
 

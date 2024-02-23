@@ -109,8 +109,16 @@ public class ControllerGame : ControllerLocal
         {
             Confiner = VCamera.GetComponent<CinemachineConfiner2D>();
         }
+        if (polygonCollider2D == null)
+        {
+            Confiner.enabled = false;
+        }
+        else
+        {
+            Confiner.enabled = true;
+            Confiner.m_BoundingShape2D = polygonCollider2D;
 
-        Confiner.m_BoundingShape2D = polygonCollider2D;
+        }
         Confiner.InvalidateCache();
     }
 

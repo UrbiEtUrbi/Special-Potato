@@ -25,4 +25,10 @@ public class EntrancePosition : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, 2f);
+    }
 }

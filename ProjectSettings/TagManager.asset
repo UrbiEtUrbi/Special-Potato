@@ -11,11 +11,11 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Enemy
   - Ground
-  - 
-  - 
-  - 
+  - Visuals
+  - Projectiles
+  - Particles
   - 
   - 
   - 
@@ -40,4 +40,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 2808554239
+    locked: 0
+  - name: Ground
+    uniqueID: 1126865757
+    locked: 0
+  - name: Entities
+    uniqueID: 3040946871
+    locked: 0
+  - name: Foreground
+    uniqueID: 68146405
     locked: 0
