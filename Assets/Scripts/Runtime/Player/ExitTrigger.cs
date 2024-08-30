@@ -16,9 +16,12 @@ public class ExitTrigger : MonoBehaviour
     [SerializeField]
     BoxCollider2D BoxCollider2D;
 
-    public void OnTriggerEnter2D()
+    public void OnTriggerEnter2D(Collider2D collider)
     {
-        ControllerGame.Rooms.LoadRoom(Room, Entrance);
+        if (!ControllerGame.Instance.IsGameOver)
+        {
+            StartCoroutine(ControllerGame.Rooms.LoadRoom(Room, Entrance));
+        }
 
     }
     private void OnDrawGizmos()

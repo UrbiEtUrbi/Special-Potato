@@ -24,7 +24,7 @@ public class PlayerMovement : MonoBehaviour
     SpriteRenderer m_Sprite;
 
 
-    bool Slowing;
+    public bool Slowing;
 
     float HorizontalSpeed;
     float HorizontalVelocity;
@@ -46,11 +46,14 @@ public class PlayerMovement : MonoBehaviour
     int GroundLayerMask;
 
     public int Direction => m_Sprite.flipX ? -1 : 1;
+    public SpriteRenderer Sprite => m_Sprite;
 
     [SerializeField]
     float AttackCooldown;
 
     float AttackTimer = 0;
+
+    Vector2 KnockForce;
 
     void OnEnable()
     {
@@ -60,6 +63,7 @@ public class PlayerMovement : MonoBehaviour
         ControllerInput.Instance.Vertical.AddListener(OnVertical);
         ControllerInput.Instance.Jump.AddListener(OnJump);
         ControllerInput.Instance.Attack.AddListener(OnAttack);
+        ControllerInput.Instance.Cast.AddListener(OnCast);
         m_Sprite = GetComponentInChildren<SpriteRenderer>();
     }
 
@@ -69,6 +73,7 @@ public class PlayerMovement : MonoBehaviour
         ControllerInput.Instance.Vertical.RemoveListener(OnVertical);
         ControllerInput.Instance.Jump.RemoveListener(OnJump);
         ControllerInput.Instance.Attack.RemoveListener(OnAttack);
+        ControllerInput.Instance.Cast.RemoveListener(OnCast);
     }
 
     private void Update()
@@ -78,10 +83,17 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+
+        if (ControllerGame.Instance.IsGameOver)
+        {
+            rb.velocity = new Vector2(rb.velocity.x * 0.9f, rb.velocity.y);
+            return;
+        }
         if (jumpApplied && rb.velocity.y > 20 && onGround)
         {
             rb.velocity = new Vector2(rb.velocity.x, 0);
         }
+      
         if (!ControllerGame.Instance.IsGamePlaying)
         {
             if (rb.bodyType != RigidbodyType2D.Static)
@@ -91,12 +103,20 @@ public class PlayerMovement : MonoBehaviour
                 Animator.SetBool("Falling", false);
                 Animator.SetBool("Jumping", !onGround);
                 HorizontalVelocity = 0;
+                HorizontalSpeed = 0;
                 rb.bodyType = RigidbodyType2D.Static;
             }
             return;
         }
-        else if (!jumped && Mathf.Abs(HorizontalVelocity) < 0.1f && (Mathf.Abs(rb.velocity.y) < 2f && onGround) && Mathf.Abs(HorizontalSpeed) < 0.1f)
+        else if (!jumped &&
+            Mathf.Abs(HorizontalVelocity) < 0.1f &&
+            (Mathf.Abs(rb.velocity.y) < 2f && onGround) &&
+            Mathf.Abs(HorizontalSpeed) < 0.1f
+            && KnockForce.magnitude < 0.1f)
         {
+            Animator.SetBool("IsWalking", false);
+            Animator.SetBool("Falling", false);
+            Animator.SetBool("Jumping", !onGround);
             rb.bodyType = RigidbodyType2D.Static;
             return;
         }
@@ -114,9 +134,14 @@ public class PlayerMovement : MonoBehaviour
 
             HorizontalVelocity += HorizontalSpeed;
         }
-        HorizontalVelocity = Mathf.Clamp(HorizontalVelocity, -MaxSpeed, MaxSpeed);
+        HorizontalVelocity = Mathf.Clamp(HorizontalVelocity, -MaxSpeed - Mathf.Abs(KnockForce.x), MaxSpeed + Mathf.Abs(KnockForce.x));;
 
         rb.velocity = new Vector2(HorizontalVelocity, rb.velocity.y);
+        KnockForce *= 0.9f;
+
+
+
+
         if (jumped)
         {
             SoundManager.Instance.Play("jump");
@@ -129,7 +154,7 @@ public class PlayerMovement : MonoBehaviour
             jumpApplied = true;
         }
 
-        if (HorizontalVelocity != 0)
+        if (HorizontalVelocity != 0 && !Slowing && !lockOrientation)
         {
             m_Sprite.flipX = HorizontalVelocity < 0;
         }
@@ -158,8 +183,45 @@ public class PlayerMovement : MonoBehaviour
       
     }
 
-   
+    [SerializeField]
+    float knockForce;
 
+
+    public void Knock(Vector3 direction)
+    {
+        jumpApplied = false;
+
+
+        direction = new Vector3(Mathf.Sign(direction.x), 0.2f, 0).normalized;
+        
+        KnockForce = direction *knockForce;
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        rb.velocity += KnockForce;
+        HorizontalVelocity += KnockForce.x;
+      
+
+    }
+
+    public void Die()
+    {
+
+        foreach (var p in Animator.parameters)
+        {
+            if (p.type == AnimatorControllerParameterType.Bool && p.name != "IsDead")
+            {
+                Animator.SetBool(p.nameHash, false);
+            }
+        }
+        Animator.SetBool("IsDead", true);
+    }
+
+    public void Revive()
+    {
+        Animator.SetBool("IsDead", false);
+        HorizontalVelocity = 0;
+        HorizontalSpeed = 0;
+        rb.velocity = default;
+    }
 
     void OnHorizontal(float amount) {
 
@@ -168,14 +230,39 @@ public class PlayerMovement : MonoBehaviour
         Slowing = Mathf.Abs(amount) <0.1f;
     }
 
+    public bool lockOrientation;
+
     void OnVertical(float amount)
     {
-
+        lockOrientation = amount > 0;
         Animator.SetBool("IsSitting", amount < 0);
+    }
+
+    void OnCast()
+    {
+        if (AttackTimer > 0)
+        {
+            return;
+        }
+        if (!ControllerGame.Instance.HasIceMelee && !ControllerGame.Instance.HasSpike)
+        {
+            return;
+        }
+        AttackTimer = AttackCooldown;
+
+
+        SoundManager.Instance.Play("spike_shoot");
+        Animator.SetBool("IsCasting", true);
+        
     }
 
     void OnAttack()
     {
+
+        if (!ControllerGame.Instance.HasStick)
+        {
+            return;
+        }
         if (AttackTimer > 0)
         {
             return;
@@ -186,16 +273,10 @@ public class PlayerMovement : MonoBehaviour
        
         AttackTimer = AttackCooldown;
 
-        if (false)
-        {
-            SoundManager.Instance.Play("melee_attack");
-            Animator.SetBool("IsAttacking", true);
-        }
-        else
-        {
-            SoundManager.Instance.Play("melee_attack");
-            Animator.SetBool("IsCasting", true);
-        }
+        SoundManager.Instance.Play("melee_attack");
+        Animator.SetBool("IsAttacking", true);
+        
+      
     }
 
     void OnEndAttack()
@@ -210,9 +291,18 @@ public class PlayerMovement : MonoBehaviour
         jumped = jump && onGround;
         if (jumped)
         {
+            
             jumpApplied = false;
+            
         }
 
+    }
+
+    public void ResetJump()
+    {
+        lockOrientation = false;
+        onGround = Physics2D.OverlapBox(rb.position + groundCheckPosition, groundCheckSize, 0, GroundLayerMask) != null;
+        Animator.SetBool("Jumping", !onGround);
     }
 
     private void OnDrawGizmos()

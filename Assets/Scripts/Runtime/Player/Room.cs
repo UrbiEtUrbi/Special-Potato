@@ -8,7 +8,10 @@ public class Room : MonoBehaviour
     public int Id;
 
     [SerializeField,Disable]
-    List<EntrancePosition> Entrances;
+    public List<EntrancePosition> Entrances;
+
+    [SerializeField, Disable]
+    public List<ExitTrigger> Exits;
 
     public bool HasEntrance(int id)
     {
@@ -25,10 +28,10 @@ public class Room : MonoBehaviour
     {
 
             Entrances = GetComponentsInChildren<EntrancePosition>().ToList();
-          
-            //UnityEditor.EditorUtility.SetDirty(this);
-        
 
+        //UnityEditor.EditorUtility.SetDirty(this);
+
+        Exits = GetComponentsInChildren<ExitTrigger>().ToList();
     }
 #endif
 }

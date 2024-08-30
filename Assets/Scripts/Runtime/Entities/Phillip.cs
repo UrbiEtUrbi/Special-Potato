@@ -12,6 +12,7 @@ public class Phillip : Creature
     [SerializeField]
     float MaxSpeed;
 
+    protected override bool Enabled => base.Enabled & isActive;
 
     public override void ToggleActive(bool _isActive)
     {
@@ -55,5 +56,41 @@ public class Phillip : Creature
             PauseTimer = PauseTime;
         }
     }
+
+
+    protected override void OnRbFreezeEnd()
+    {
+        var rb = gameObject.GetComponent<Rigidbody2D>();
+        rb.freezeRotation = true;
+        rb.mass = 10f;
+        rb.drag = 5f;
+        rb.gravityScale = 10f;
+        gameObject.layer = LayerMask.NameToLayer("Particles");
+    }
+    protected override void OnStun()
+    {
+        base.OnStun();
+        var rb = gameObject.GetComponent<Rigidbody2D>();
+        if (!rb)
+        {
+            rb = gameObject.AddComponent<Rigidbody2D>();
+        }
+        rb.freezeRotation = true;
+        rb.mass = 10f;
+        rb.drag = 5f;
+        rb.gravityScale = 10f;
+        gameObject.layer = LayerMask.NameToLayer("Particles");
+        OnFreezeEnd();
+    }
+
+    protected override void OnEndStun()
+    {
+        base.OnEndStun();
+        Destroy(gameObject.GetComponent<Rigidbody2D>());
+        gameObject.layer = LayerMask.NameToLayer("Enemy");
+
+    }
+
+    
 
 }

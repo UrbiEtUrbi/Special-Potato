@@ -55,7 +55,7 @@ public enum AttackType
 {
     PlayerSword,
     GoombaAttack,
-    ArcherAttack,
+    BulbShoot,
     IceSpike,
     IceMelee
 }

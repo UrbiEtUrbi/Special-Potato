@@ -42,15 +42,22 @@ public class LinearProjectile : MonoBehaviour
 
     public void BeforeDestroy()
     {
+        if (OnHit == null)
+        {
+            return;
+        }
         var t = Instantiate(OnHit);
 
-        var child = transform.GetChild(0);
+        if (transform.childCount > 0)
+        {
+            var child = transform.GetChild(0);
 
-        child.SetParent(null);
-        child.transform.localScale = new Vector3(1, 1, 1);
-         child.GetComponent<ParticleSystem>().Stop(true, ParticleSystemStopBehavior.StopEmitting);
-        var dd = child.gameObject.AddComponent<DestroyDelayed>();
-        dd.Init(10f);
+            child.SetParent(null);
+            child.transform.localScale = new Vector3(1, 1, 1);
+            child.GetComponent<ParticleSystem>().Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            var dd = child.gameObject.AddComponent<DestroyDelayed>();
+            dd.Init(10f);
+        }
         t.transform.position = transform.position;
     }
 }

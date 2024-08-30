@@ -21,12 +21,12 @@ public class Boner : Creature
     Vector3 WallCheckSize;
 
 
+    protected override bool Enabled => StunTimer < 0 && !isFrozen;
 
 
-  
 
 
-   
+
 
     protected override void FixedUpdate()
     {
@@ -62,14 +62,14 @@ public class Boner : Creature
 
    
 
-    private void OnDrawGizmosSelected()
+    protected override void OnDrawGizmosSelected()
     {
        
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(transform.position + GroundCheckPosition, GroundCheckSize);
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(transform.position + WallCheckPostion, WallCheckSize);
-        
+        base.OnDrawGizmosSelected();
     }
 
 }

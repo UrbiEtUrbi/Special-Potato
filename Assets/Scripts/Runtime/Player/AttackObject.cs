@@ -47,25 +47,36 @@ public class AttackObject : MonoBehaviour
         if (!initialized) {
             return;
         }
-        var colliderHit = Physics2D.OverlapBox(transform.position, attackSize, transform.rotation.eulerAngles.y, TargetLayer);
-        if (colliderHit != null)
+        var colliders = Physics2D.OverlapBoxAll(transform.position, attackSize, transform.rotation.eulerAngles.y, TargetLayer);
+
+        foreach (var colliderHit in colliders)
         {
-
-            
-            colliderHit.GetComponent<IHealth>().ChangeHealth(-damage, type);
-            CancelInvoke();
-            if (generateImpulse)
+            if (colliderHit != null)
             {
-                var cis = GetComponent<CinemachineImpulseSource>();
-                cis.GenerateImpulse(new Vector3(Random.Range(-1f,1f), Random.Range(-1, 1f), 0) * impulseAmplitude);
-            }
+               
+                var h = colliderHit.GetComponent<IHealth>();
+                if (h == null)
+                {
+                    continue;
+                }
 
-            var lp = GetComponent<LinearProjectile>();
-            if (lp != null)
-            {
-                lp.BeforeDestroy();
+
+                colliderHit.GetComponent<IHealth>().ChangeHealth(-damage, type);
+                CancelInvoke();
+                if (generateImpulse)
+                {
+                    var cis = GetComponent<CinemachineImpulseSource>();
+                    cis.GenerateImpulse(new Vector3(Random.Range(-1f, 1f), Random.Range(-1, 1f), 0) * impulseAmplitude);
+                }
+
+                var lp = GetComponent<LinearProjectile>();
+                if (lp != null)
+                {
+                    lp.BeforeDestroy();
+                }
+                Destroy(gameObject);
+                break;
             }
-            Destroy(gameObject);
         }
     }
 

@@ -5,6 +5,7 @@ using UnityEngine.Audio;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class SoundManager : GenericSingleton<SoundManager>
 {
@@ -174,6 +175,21 @@ public class SoundManager : GenericSingleton<SoundManager>
         soundInstance.Set(next, sounds[idx], target, MinDistance, MaxDistance, UseSpatialSound);
 
 
+
+        if (PlayingSounds.Count > 0)
+        {
+          
+            var c = PlayingSounds.OrderByDescending(x => x.Volume).ToList();
+            if (c[0].Volume > soundInstance.Volume)
+            {
+                soundInstance.UpdateVolume(true);
+            }
+            else
+            {
+                c[0].UpdateVolume(true);
+            }
+        }
+
         var length = soundInstance.Play();
 
 
@@ -203,6 +219,20 @@ public class SoundManager : GenericSingleton<SoundManager>
 
         }
         return soundInstance;
+    }
+
+
+    private void Update()
+    {
+        var c = PlayingSounds.OrderByDescending(x => x.Volume).ToList();
+        for (int i = 0; i < c.Count; i++)
+        {
+            if (c[i] == null)
+            {
+                continue;
+            }
+            c[i].UpdateVolume(i != 0);
+        }
     }
 
 

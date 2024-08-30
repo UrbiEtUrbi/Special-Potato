@@ -78,9 +78,11 @@ MonoBehaviour:
   art: {fileID: 5085079383272617945}
   frozenSize: {x: 10, y: 8}
   frozenOffset: {x: 0, y: -2}
+  stunSound: boner_die
+  AttackArea: {x: 9, y: 9}
   GroundCheckPosition: {x: -6, y: -7, z: 0}
   GroundCheckSize: {x: 1, y: 1, z: 0}
-  WallCheckPostion: {x: -7, y: 0, z: 0}
+  WallCheckPostion: {x: -7, y: -3, z: 0}
   WallCheckSize: {x: 1, y: 1, z: 0}
 --- !u!61 &8702581125124042156
 BoxCollider2D:

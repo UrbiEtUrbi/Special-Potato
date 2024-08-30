@@ -72,5 +72,10 @@ public class CheckBeforeBuild : UnityEditor.Build.IPreprocessBuildWithReport
     public void OnPreprocessBuild(BuildReport report)
     {
         PlayerSettings.SplashScreen.showUnityLogo = false;
+      
+
+
     }
+
+   
 }

@@ -42,6 +42,7 @@ public class ControllerGame : ControllerLocal
     public bool IsGamePlaying;
 
 
+    public bool AcceptInput => !IsGameOver && IsGamePlaying;
 
     #region Controllers
     ControllerEntities m_ControllerEntities;
@@ -61,7 +62,33 @@ public class ControllerGame : ControllerLocal
     ControllerRooms m_ControllerRooms;
     public static ControllerRooms Rooms => Instance.m_ControllerRooms;
 
+    ControllerPickups m_ControllerPickups;
+    public static ControllerPickups ControllerPickups => Instance.m_ControllerPickups;
+
+    ControllerDialog m_ControllerDialog;
+    public static ControllerDialog ControllerDialog => Instance.m_ControllerDialog;
+
     #endregion
+
+
+    [SerializeField]
+    HpView HpView;
+
+    [SerializeField]
+    int PlayerMaxHealthStarting = 2;
+
+
+    int currentMaxHealth;
+    int currentMaxStamina;
+    int currenthp;
+    int currentStamina;
+
+    public bool HasStick;
+    public bool HasSpike;
+    public bool HasIceMelee;
+
+    [SerializeField]
+    int initRoom, initEntrance;
 
     public static bool Initialized
     {
@@ -91,6 +118,47 @@ public class ControllerGame : ControllerLocal
 
         m_ControllerAttack = GetComponent<ControllerAttack>();
         m_ControllerRooms = GetComponent<ControllerRooms>();
+        m_ControllerPickups = GatherComponent<ControllerPickups>();
+        m_ControllerDialog = GetComponent<ControllerDialog>();
+
+        if (ControllerLoadingScene.Instance.HasSave)
+        {
+            var save = ControllerLoadingScene.Instance.SaveData;
+            currentMaxHealth = save.MaxHp;
+            currenthp = save.CurrentHP;
+            currentStamina = save.CurrentStamina;
+            currentMaxStamina = save.MaxStamina;
+            HasSpike = save.HasSpike;
+            HasStick = save.HasStick;
+            HasIceMelee = save.HasIceMelee;
+            initRoom = save.Room;
+            initEntrance = save.Entrance;
+
+            foreach (var t in save.Dialogues)
+            {
+                m_ControllerDialog.Triggered.Add(t);
+            }
+
+            foreach (var pickup in save.Pickups)
+            {
+                m_ControllerPickups.PickedUp.Add(pickup);
+            }
+
+        }
+        else
+        {
+ #if !UNITY_EDITOR
+            currentMaxHealth = 1;
+            currenthp = 1;
+            currentStamina = 0;
+            currentMaxStamina = 0;
+            HasSpike = false;
+            HasStick = false;
+            HasIceMelee = false;
+            initRoom = 0;
+            initEntrance = 0;
+#endif
+        }
         Instance = this;
 
 
@@ -125,28 +193,90 @@ public class ControllerGame : ControllerLocal
     IEnumerator WaitForSceneLoad() {
         yield return null;
         player = Instantiate(PlayerPrefab);
-      
-        Rooms.InitialRoom(0,0);
-       
-       
+        SetPlayerMaxHealth(PlayerMaxHealthStarting+currentMaxHealth);
+        player.ChangeHealth(PlayerMaxHealthStarting+currentMaxHealth);
+        Rooms.InitialRoom(initRoom,initEntrance);
+        //MusicPlayer.Instance.PlayPlaylist("main");
+
+
+    }
+
+    public void SetPlayerMaxHealth(int amount)
+    {
+        player.SetInitialHealth(amount);
+        HpView.SetMaxHealth(amount);
+    }
+    
+    public void IncreaseMax(int amount)
+    {
+        currentMaxHealth += amount;
+        player.SetInitialHealth(PlayerMaxHealthStarting+currentMaxHealth);
+        HpView.SetMaxHealth(PlayerMaxHealthStarting+ currentMaxHealth);
+    }
+
+    public void UpdateHealthUI()
+    {
+        HpView.UpdateHealth(player.CurrentHealth);
+
     }
 
     public void GameOver()
     {
-        IsGameOver = true;
 
-        //reload whole game scenes or entities
-        SoundManager.Instance.PlayDelayed("transform", 3f); 
-        Invoke(nameof(Reload), 9.5f);
+        SoundManager.Instance.Play("game_over");
+        IsGameOver = true;
+        IsGamePlaying = false;
+        Rooms.OnGameOver();  
+    }
+
+    public void Win()
+    {
+        IsGameOver = true;
+        IsGamePlaying = false;
+
+        SoundManager.Instance.PlayDelayed("win", 3.2f);
+       
+        Invoke(nameof(WinDelayed), 3.2f);
+    }
+
+    void WinDelayed()
+    {
+        Rooms.OnWin();
+    }
+
+    public void Continue()
+    {
+        SetPlayerMaxHealth(PlayerMaxHealthStarting+ currentMaxHealth);
+        player.ChangeHealth(PlayerMaxHealthStarting+ currentMaxHealth);
+       
+        IsGameOver = false;
+        IsGamePlaying = true;
+    }
+
+    public void Save()
+    {
+        var savedata = new SaveData
+        {
+            HasIceMelee = HasIceMelee,
+            HasSpike = HasSpike,
+            HasStick = HasStick,
+            Entrance = Rooms.CurrentEntrance,
+            Room = Rooms.CurrentRoom.Id,
+            Dialogues = m_ControllerDialog.Triggered,
+            Pickups = m_ControllerPickups.PickedUp,
+            CurrentHP = player.CurrentHealth,
+            MaxHp = currentMaxHealth,
+            CurrentStamina = 0,
+            MaxStamina = 0
+        };
+        ControllerLoadingScene.Instance.Save(savedata);
+
     }
 
   
 
     void Reload()
     {
-        MusicPlayer.Instance.StopPlaying(1);
-        ControllerGameFlow.Instance.ResetCurrentScene();
-
     }
 
     public void PlayerDie()

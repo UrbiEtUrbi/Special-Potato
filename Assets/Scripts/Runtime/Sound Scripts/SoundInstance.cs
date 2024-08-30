@@ -13,6 +13,8 @@ public class SoundInstance : PoolObject
     float m_Volume;
 
 
+    public float Volume => m_Volume;
+
     string m_SoundName;
     public string SoundName => m_SoundName;
     public float Length{
@@ -36,6 +38,23 @@ public class SoundInstance : PoolObject
         m_AudioSource.loop = loop;
     }
 
+
+    public void UpdateVolume(bool mute)
+    {
+        if (m_AudioSource == null)
+        {
+            return;
+        }
+        if (mute)
+        {
+
+            m_AudioSource.volume = 0;
+        }
+        else
+        {
+            m_AudioSource.volume = m_Volume;
+        }
+    }
 
     public void Set(SoundItem item, Sound sound, Transform target, float minDistance, float maxDistance, bool spatialBlend)
     {
